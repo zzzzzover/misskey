@@ -110,6 +110,11 @@ export const navbarItemDef = reactive({
 		icon: 'ti ti-device-tv',
 		to: '/channels',
 	},
+	events: {
+		title: i18n.ts.event,
+		icon: 'ti ti-calendar-event',
+		to: '/events',
+	},
 	chat: {
 		title: i18n.ts.chat,
 		icon: 'ti ti-messages',
