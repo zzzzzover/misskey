@@ -224,4 +224,3 @@ const bannerStyle = computed(() => {
 	aspect-ratio: 1 / 1;
 }
 </style>
-</rewritten_file>

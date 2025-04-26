@@ -40,6 +40,31 @@ export type PageEvent = {
 	user: User;
 };
 
+export type Event = {
+	id: ID;
+	createdAt: DateString;
+	updatedAt?: DateString;
+	name: string;
+	description?: string | null;
+	bannerUrl?: string | null;
+	bannerId?: string | null;
+	isSensitive: boolean;
+	isFollowing?: boolean;
+	isFavorited?: boolean;
+	usersCount: number;
+	notesCount: number;
+	userId: User['id'];
+	user?: User;
+	pinnedNoteIds: string[];
+	pinnedNotes?: Note[];
+	color: string;
+	lastNotedAt?: DateString | null;
+	startDate?: string | null;
+	endDate?: string | null;
+	isArchived?: boolean;
+	allowRenoteToExternal: boolean;
+};
+
 export type ModerationLog = {
 	id: ID;
 	createdAt: DateString;
