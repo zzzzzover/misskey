@@ -68,6 +68,70 @@ import { packedChatRoomSchema } from '@/models/json-schema/chat-room.js';
 import { packedChatRoomInvitationSchema } from '@/models/json-schema/chat-room-invitation.js';
 import { packedChatRoomMembershipSchema } from '@/models/json-schema/chat-room-membership.js';
 
+const packedEventSchema = {
+	type: 'object',
+	properties: {
+		id: {
+			type: 'string',
+			optional: false, nullable: false,
+			format: 'id',
+			example: 'xxxxxxxxxx',
+		},
+		createdAt: {
+			type: 'string',
+			optional: false, nullable: false,
+			format: 'date-time',
+		},
+		name: {
+			type: 'string',
+			optional: false, nullable: false,
+		},
+		description: {
+			type: 'string',
+			optional: false, nullable: true,
+		},
+		userId: {
+			type: 'string',
+			optional: false, nullable: true,
+			format: 'id',
+		},
+		bannerUrl: {
+			type: 'string',
+			optional: false, nullable: true,
+		},
+		location: {
+			type: 'string',
+			optional: false, nullable: true,
+		},
+		start: {
+			type: 'string',
+			optional: false, nullable: true,
+			format: 'date-time',
+		},
+		end: {
+			type: 'string',
+			optional: false, nullable: true,
+			format: 'date-time',
+		},
+		isOnline: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
+		participantsCount: {
+			type: 'number',
+			optional: false, nullable: false,
+		},
+		isFollowing: {
+			type: 'boolean',
+			optional: true, nullable: false,
+		},
+		isFavorited: {
+			type: 'boolean',
+			optional: true, nullable: false,
+		},
+	},
+} as const;
+
 export const refs = {
 	UserLite: packedUserLiteSchema,
 	UserDetailedNotMeOnly: packedUserDetailedNotMeOnlySchema,
@@ -96,6 +160,7 @@ export const refs = {
 	Page: packedPageSchema,
 	PageBlock: packedPageBlockSchema,
 	Channel: packedChannelSchema,
+	Event: packedEventSchema,
 	QueueCount: packedQueueCountSchema,
 	Antenna: packedAntennaSchema,
 	Clip: packedClipSchema,

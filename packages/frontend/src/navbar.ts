@@ -111,7 +111,7 @@ export const navbarItemDef = reactive({
 		to: '/channels',
 	},
 	events: {
-		title: i18n.ts.event,
+		title: '活动',
 		icon: 'ti ti-calendar-event',
 		to: '/events',
 	},

@@ -81,6 +81,9 @@ import { MiChatRoomInvitation } from '@/models/ChatRoomInvitation.js';
 import { MiChatApproval } from '@/models/ChatApproval.js';
 import { MiBubbleGameRecord } from '@/models/BubbleGameRecord.js';
 import { MiReversiGame } from '@/models/ReversiGame.js';
+import { MiEvent } from '@/models/Event.js';
+import { MiEventFollowing } from '@/models/EventFollowing.js';
+import { MiEventFavorite } from '@/models/EventFavorite.js';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 export interface MiRepository<T extends ObjectLiteral> {
@@ -201,6 +204,9 @@ export {
 	MiChatApproval,
 	MiBubbleGameRecord,
 	MiReversiGame,
+	MiEvent,
+	MiEventFollowing,
+	MiEventFavorite,
 };
 
 export type AbuseUserReportsRepository = Repository<MiAbuseUserReport> & MiRepository<MiAbuseUserReport>;
@@ -262,7 +268,7 @@ export type UserProfilesRepository = Repository<MiUserProfile> & MiRepository<Mi
 export type UserPublickeysRepository = Repository<MiUserPublickey> & MiRepository<MiUserPublickey>;
 export type UserSecurityKeysRepository = Repository<MiUserSecurityKey> & MiRepository<MiUserSecurityKey>;
 export type WebhooksRepository = Repository<MiWebhook> & MiRepository<MiWebhook>;
-export type SystemWebhooksRepository = Repository<MiSystemWebhook> & MiRepository<MiWebhook>;
+export type SystemWebhooksRepository = Repository<MiSystemWebhook> & MiRepository<MiSystemWebhook>;
 export type ChannelsRepository = Repository<MiChannel> & MiRepository<MiChannel>;
 export type RetentionAggregationsRepository = Repository<MiRetentionAggregation> & MiRepository<MiRetentionAggregation>;
 export type RolesRepository = Repository<MiRole> & MiRepository<MiRole>;
@@ -277,3 +283,6 @@ export type ChatRoomInvitationsRepository = Repository<MiChatRoomInvitation> & M
 export type ChatApprovalsRepository = Repository<MiChatApproval> & MiRepository<MiChatApproval>;
 export type BubbleGameRecordsRepository = Repository<MiBubbleGameRecord> & MiRepository<MiBubbleGameRecord>;
 export type ReversiGamesRepository = Repository<MiReversiGame> & MiRepository<MiReversiGame>;
+export type EventsRepository = Repository<MiEvent> & MiRepository<MiEvent>;
+export type EventFollowingsRepository = Repository<MiEventFollowing> & MiRepository<MiEventFollowing>;
+export type EventFavoritesRepository = Repository<MiEventFavorite> & MiRepository<MiEventFavorite>;
