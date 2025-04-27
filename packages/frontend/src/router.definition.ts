@@ -339,17 +339,6 @@ export const ROUTE_DEF = [{
 	path: '/channels',
 	component: page(() => import('@/pages/channels.vue')),
 }, {
-	path: '/events/:eventId/edit',
-	component: page(() => import('@/pages/event-editor.vue')),
-	loginRequired: true,
-}, {
-	path: '/events/new',
-	component: page(() => import('@/pages/event-editor.vue')),
-	loginRequired: true,
-}, {
-	path: '/events/:eventId',
-	component: page(() => import('@/pages/event.vue')),
-}, {
 	path: '/events',
 	component: page(() => import('@/pages/events.vue')),
 }, {
