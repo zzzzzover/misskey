@@ -5,6 +5,8 @@
 
 import { Module } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
+import { MiEvent } from '@/models/Event.js';
+import { MiEventParticipant } from '@/models/EventParticipant.js';
 import {
 	MiAbuseReportNotificationRecipient,
 	MiAbuseUserReport,
@@ -452,6 +454,18 @@ const $passwordResetRequestsRepository: Provider = {
 	inject: [DI.db],
 };
 
+const $eventsRepository: Provider = {
+	provide: DI.eventsRepository,
+	useFactory: (db: DataSource) => db.getRepository(MiEvent).extend(miRepository as MiRepository<MiEvent>),
+	inject: [DI.db],
+};
+
+const $eventParticipantsRepository: Provider = {
+	provide: DI.eventParticipantsRepository,
+	useFactory: (db: DataSource) => db.getRepository(MiEventParticipant).extend(miRepository as MiRepository<MiEventParticipant>),
+	inject: [DI.db],
+};
+
 const $retentionAggregationsRepository: Provider = {
 	provide: DI.retentionAggregationsRepository,
 	useFactory: (db: DataSource) => db.getRepository(MiRetentionAggregation).extend(miRepository as MiRepository<MiRetentionAggregation>),
@@ -479,6 +493,18 @@ const $rolesRepository: Provider = {
 const $roleAssignmentsRepository: Provider = {
 	provide: DI.roleAssignmentsRepository,
 	useFactory: (db: DataSource) => db.getRepository(MiRoleAssignment).extend(miRepository as MiRepository<MiRoleAssignment>),
+	inject: [DI.db],
+};
+
+const $flashsRepository: Provider = {
+	provide: DI.flashsRepository,
+	useFactory: (db: DataSource) => db.getRepository(MiFlash).extend(miRepository as MiRepository<MiFlash>),
+	inject: [DI.db],
+};
+
+const $flashLikesRepository: Provider = {
+	provide: DI.flashLikesRepository,
+	useFactory: (db: DataSource) => db.getRepository(MiFlashLike).extend(miRepository as MiRepository<MiFlashLike>),
 	inject: [DI.db],
 };
 
@@ -594,6 +620,8 @@ const $reversiGamesRepository: Provider = {
 		$systemWebhooksRepository,
 		$adsRepository,
 		$passwordResetRequestsRepository,
+		$eventsRepository,
+		$eventParticipantsRepository,
 		$retentionAggregationsRepository,
 		$rolesRepository,
 		$roleAssignmentsRepository,
@@ -670,6 +698,8 @@ const $reversiGamesRepository: Provider = {
 		$systemWebhooksRepository,
 		$adsRepository,
 		$passwordResetRequestsRepository,
+		$eventsRepository,
+		$eventParticipantsRepository,
 		$retentionAggregationsRepository,
 		$rolesRepository,
 		$roleAssignmentsRepository,

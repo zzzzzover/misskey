@@ -12,6 +12,7 @@ import MkTab from '@/components/MkTab.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import { i18n } from '@/i18n.js';
+import { misskeyApi } from '@/utility/misskey-api.js';
 
 // 定义事件类型
 interface Event {
@@ -19,7 +20,8 @@ interface Event {
 	title: string;
 	description: string;
 	endsAt: string;
-	bannerUrl: string;
+	bannerId?: string;
+	bannerUrl?: string;
 	participantsCount: number;
 	isParticipating: boolean;
 }
@@ -52,28 +54,45 @@ if (isAdmin.value) {
 
 const fetchEvents = async (type: string) => {
 	loading.value = true;
-	// 在这里实现获取活动列表的逻辑，目前使用模拟数据
-	events.value = [
-		{
-			id: '1',
-			title: '2024年社区春季活动',
-			description: '欢迎参加我们的春季活动！这是一个分享和交流的好机会。\n\n活动内容包括：\n1. 线上交友\n2. 分享创意\n3. 参与互动游戏',
-			endsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-			bannerUrl: 'https://images.unsplash.com/photo-1554418651-70309daf95f5?q=80&w=1000',
-			participantsCount: 56,
-			isParticipating: false,
-		},
-		{
-			id: '2',
-			title: '技术分享大会',
-			description: '邀请各位技术爱好者参与我们的分享大会，共同探讨最新技术趋势！',
-			endsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-			bannerUrl: 'https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?q=80&w=1000',
-			participantsCount: 42,
-			isParticipating: true,
-		},
-	];
-	loading.value = false;
+
+	try {
+		const response = await misskeyApi('events/list', {
+			type: type as any,
+			limit: 30,
+		});
+
+		events.value = response as Event[];
+	} catch (error: any) {
+		console.error('获取活动列表失败：', error);
+		os.alert({
+			type: 'error',
+			text: '获取活动列表失败',
+		});
+
+		// 使用模拟数据作为后备
+		events.value = [
+			{
+				id: '1',
+				title: '2024年社区春季活动',
+				description: '欢迎参加我们的春季活动！这是一个分享和交流的好机会。\n\n活动内容包括：\n1. 线上交友\n2. 分享创意\n3. 参与互动游戏',
+				endsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+				bannerUrl: 'https://images.unsplash.com/photo-1554418651-70309daf95f5?q=80&w=1000',
+				participantsCount: 56,
+				isParticipating: false,
+			},
+			{
+				id: '2',
+				title: '技术分享大会',
+				description: '邀请各位技术爱好者参与我们的分享大会，共同探讨最新技术趋势！',
+				endsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+				bannerUrl: 'https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?q=80&w=1000',
+				participantsCount: 42,
+				isParticipating: true,
+			},
+		];
+	} finally {
+		loading.value = false;
+	}
 };
 
 watch(tab, (newTab) => {
@@ -99,17 +118,24 @@ const createEvent = () => {
 		endsAt: {
 			type: 'string',
 			label: '结束时间',
+			default: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
 		},
-		bannerUrl: {
+		bannerId: {
 			type: 'string',
-			label: '横幅图片链接',
+			label: '横幅图片ID (可选)',
+			required: false,
 		},
-	}).then(async result => {
-		os.alert({
-			type: 'info',
-			text: '活动创建功能将在后端实现后可用',
-		});
-		fetchEvents(tab.value);
+	}).then(async (result: any) => {
+		try {
+			await os.apiWithDialog('events/create' as any, result);
+			fetchEvents(tab.value);
+		} catch (error: any) {
+			console.error('创建活动失败：', error);
+			os.alert({
+				type: 'error',
+				text: '创建活动失败：' + (error.message || '未知错误'),
+			});
+		}
 	});
 };
 
@@ -129,19 +155,31 @@ const editEvent = (event: Event) => {
 		endsAt: {
 			type: 'string',
 			label: '结束时间',
-			default: new Date(event.endsAt).toLocaleString(),
+			default: event.endsAt,
 		},
-		bannerUrl: {
+		bannerId: {
 			type: 'string',
-			label: '横幅图片链接',
-			default: event.bannerUrl,
+			label: '横幅图片ID (可选)',
+			default: event.bannerId || '',
+			required: false,
 		},
-	}).then(async result => {
-		os.alert({
-			type: 'info',
-			text: '活动编辑功能将在后端实现后可用',
-		});
-		fetchEvents(tab.value);
+	}).then(async (result: any) => {
+		try {
+			await os.apiWithDialog('events/update' as any, {
+				eventId: event.id,
+				...result,
+			});
+			fetchEvents(tab.value);
+			if (selectedEvent.value && selectedEvent.value.id === event.id) {
+				selectedEvent.value = null;
+			}
+		} catch (error: any) {
+			console.error('编辑活动失败：', error);
+			os.alert({
+				type: 'error',
+				text: '编辑活动失败：' + (error.message || '未知错误'),
+			});
+		}
 	});
 };
 
@@ -151,42 +189,62 @@ const deleteEvent = (event: Event) => {
 		text: '确定要删除这个活动吗？',
 	}).then(({ canceled }) => {
 		if (canceled) return;
-		os.alert({
-			type: 'info',
-			text: '活动删除功能将在后端实现后可用',
+
+		os.apiWithDialog('events/delete' as any, {
+			eventId: event.id,
+		}).then(() => {
+			fetchEvents(tab.value);
+			if (selectedEvent.value && selectedEvent.value.id === event.id) {
+				selectedEvent.value = null;
+			}
+		}).catch((error: any) => {
+			console.error('删除活动失败：', error);
+			os.alert({
+				type: 'error',
+				text: '删除活动失败：' + (error.message || '未知错误'),
+			});
 		});
-		fetchEvents(tab.value);
 	});
 };
 
 const participateEvent = (event: Event) => {
-	os.alert({
-		type: 'info',
-		text: '参加活动功能将在后端实现后可用',
+	os.apiWithDialog('events/participate' as any, {
+		eventId: event.id,
+	}).then(() => {
+		if (selectedEvent.value && selectedEvent.value.id === event.id) {
+			selectedEvent.value = {
+				...selectedEvent.value,
+				isParticipating: true,
+				participantsCount: selectedEvent.value.participantsCount + 1,
+			};
+		}
+	}).catch((error: any) => {
+		console.error('参加活动失败：', error);
+		os.alert({
+			type: 'error',
+			text: '参加活动失败：' + (error.message || '未知错误'),
+		});
 	});
-	// 模拟更新界面
-	if (selectedEvent.value && selectedEvent.value.id === event.id) {
-		selectedEvent.value = {
-			...selectedEvent.value,
-			isParticipating: true,
-			participantsCount: selectedEvent.value.participantsCount + 1,
-		};
-	}
 };
 
 const leaveEvent = (event: Event) => {
-	os.alert({
-		type: 'info',
-		text: '退出活动功能将在后端实现后可用',
+	os.apiWithDialog('events/leave' as any, {
+		eventId: event.id,
+	}).then(() => {
+		if (selectedEvent.value && selectedEvent.value.id === event.id) {
+			selectedEvent.value = {
+				...selectedEvent.value,
+				isParticipating: false,
+				participantsCount: selectedEvent.value.participantsCount - 1,
+			};
+		}
+	}).catch((error: any) => {
+		console.error('退出活动失败：', error);
+		os.alert({
+			type: 'error',
+			text: '退出活动失败：' + (error.message || '未知错误'),
+		});
 	});
-	// 模拟更新界面
-	if (selectedEvent.value && selectedEvent.value.id === event.id) {
-		selectedEvent.value = {
-			...selectedEvent.value,
-			isParticipating: false,
-			participantsCount: selectedEvent.value.participantsCount - 1,
-		};
-	}
 };
 
 onMounted(() => {
@@ -197,7 +255,15 @@ onMounted(() => {
 <template>
 <div class="mk-events-view">
 	<MkContainer :style="{ marginBottom: '1.5em' }">
-		<template #header>活动</template>
+		<template #header>
+			<div class="header-container">
+				<span>活动</span>
+				<MkButton v-if="isAdmin" class="create-button" primary @click="createEvent">
+					<i class="ti ti-plus"></i> 创建活动
+				</MkButton>
+			</div>
+		</template>
+
 		<MkTab v-model="tab" :tabs="tabs" style="margin-bottom: 1em;"/>
 
 		<div v-if="tab !== 'admin'" class="events-container">
@@ -267,11 +333,7 @@ onMounted(() => {
 			</div>
 		</div>
 
-		<div v-else-if="tab === 'admin'" class="admin-panel">
-			<MkButton primary @click="createEvent">
-				<i class="ti ti-plus"></i> 创建活动
-			</MkButton>
-
+		<div v-if="tab === 'admin'" class="admin-panel">
 			<div class="admin-event-list">
 				<div v-if="events.length === 0" class="empty">
 					<p>暂无活动</p>
@@ -303,6 +365,19 @@ onMounted(() => {
 .mk-events-view {
 	max-width: 1200px;
 	margin: 0 auto;
+}
+
+.header-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.create-button {
+	font-size: 0.9em;
+	padding: 0 12px;
+	height: 32px;
 }
 
 .events-container {
@@ -448,10 +523,6 @@ onMounted(() => {
 }
 
 .admin-panel {
-	> button {
-		margin-bottom: 20px;
-	}
-
 	.admin-event-list {
 		display: flex;
 		flex-direction: column;

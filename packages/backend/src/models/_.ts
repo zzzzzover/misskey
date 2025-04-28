@@ -81,6 +81,8 @@ import { MiChatRoomInvitation } from '@/models/ChatRoomInvitation.js';
 import { MiChatApproval } from '@/models/ChatApproval.js';
 import { MiBubbleGameRecord } from '@/models/BubbleGameRecord.js';
 import { MiReversiGame } from '@/models/ReversiGame.js';
+import { MiEvent } from '@/models/Event.js';
+import { MiEventParticipant } from '@/models/EventParticipant.js';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 export interface MiRepository<T extends ObjectLiteral> {
@@ -201,6 +203,8 @@ export {
 	MiChatApproval,
 	MiBubbleGameRecord,
 	MiReversiGame,
+	MiEvent,
+	MiEventParticipant,
 };
 
 export type AbuseUserReportsRepository = Repository<MiAbuseUserReport> & MiRepository<MiAbuseUserReport>;
@@ -277,3 +281,5 @@ export type ChatRoomInvitationsRepository = Repository<MiChatRoomInvitation> & M
 export type ChatApprovalsRepository = Repository<MiChatApproval> & MiRepository<MiChatApproval>;
 export type BubbleGameRecordsRepository = Repository<MiBubbleGameRecord> & MiRepository<MiBubbleGameRecord>;
 export type ReversiGamesRepository = Repository<MiReversiGame> & MiRepository<MiReversiGame>;
+export type EventsRepository = Repository<MiEvent> & MiRepository<MiEvent>;
+export type EventParticipantsRepository = Repository<MiEventParticipant> & MiRepository<MiEventParticipant>;
