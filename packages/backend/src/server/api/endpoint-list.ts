@@ -421,3 +421,9 @@ export * as 'chat/rooms/invitations/inbox' from './endpoints/chat/rooms/invitati
 export * as 'chat/rooms/invitations/outbox' from './endpoints/chat/rooms/invitations/outbox.js';
 export * as 'chat/history' from './endpoints/chat/history.js';
 export * as 'v2/admin/emoji/list' from './endpoints/v2/admin/emoji/list.js';
+export * as 'events/list' from './endpoints/events/list.js';
+export * as 'events/create' from './endpoints/events/create.js';
+export * as 'events/update' from './endpoints/events/update.js';
+export * as 'events/delete' from './endpoints/events/delete.js';
+export * as 'events/participate' from './endpoints/events/participate.js';
+export * as 'events/leave' from './endpoints/events/leave.js';
