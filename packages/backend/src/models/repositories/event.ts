@@ -3,24 +3,33 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { db } from '@/db/postgre.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { DI } from '@/di-symbols.js';
 import { Event } from '@/models/entities/event.js';
 import { EventParticipant } from '@/models/entities/event-participant.js';
-import { User } from '@/models/entities/user.js';
-import { DriveFile } from '@/models/entities/drive-file.js';
-import { makePaginationQuery } from './make-pagination-query.js';
+import { MiUser } from '@/models/User.js';
+import { MiDriveFile } from '@/models/DriveFile.js';
 
-export const EventRepository = db.getRepository(Event).extend({
+export const EventRepository = (db: DataSource) => db.getRepository(Event).extend({
 	async findActive(options: {
 		limit?: number;
 		sinceId?: string;
 		untilId?: string;
 	}) {
-		const query = makePaginationQuery(this.createQueryBuilder('event'), options.sinceId, options.untilId)
+		const query = this.createQueryBuilder('event')
 			.andWhere('event.endsAt > :now', { now: new Date() })
 			.leftJoinAndSelect('event.user', 'user')
 			.leftJoinAndSelect('event.banner', 'banner')
 			.orderBy('event.createdAt', 'DESC');
+
+		if (options.sinceId) {
+			query.andWhere('event.id > :sinceId', { sinceId: options.sinceId });
+		}
+
+		if (options.untilId) {
+			query.andWhere('event.id < :untilId', { untilId: options.untilId });
+		}
 
 		if (options.limit) {
 			query.take(options.limit);
@@ -34,11 +43,19 @@ export const EventRepository = db.getRepository(Event).extend({
 		sinceId?: string;
 		untilId?: string;
 	}) {
-		const query = makePaginationQuery(this.createQueryBuilder('event'), options.sinceId, options.untilId)
+		const query = this.createQueryBuilder('event')
 			.andWhere('event.endsAt <= :now', { now: new Date() })
 			.leftJoinAndSelect('event.user', 'user')
 			.leftJoinAndSelect('event.banner', 'banner')
 			.orderBy('event.endsAt', 'DESC');
+
+		if (options.sinceId) {
+			query.andWhere('event.id > :sinceId', { sinceId: options.sinceId });
+		}
+
+		if (options.untilId) {
+			query.andWhere('event.id < :untilId', { untilId: options.untilId });
+		}
 
 		if (options.limit) {
 			query.take(options.limit);
@@ -47,7 +64,7 @@ export const EventRepository = db.getRepository(Event).extend({
 		return await query.getMany();
 	},
 
-	async getEventWithParticipationStatus(eventId: Event['id'], userId?: User['id']): Promise<{
+	async getEventWithParticipationStatus(eventId: Event['id'], userId?: MiUser['id']): Promise<{
 		event: Event & { isParticipating: boolean };
 	}> {
 		// Get event
@@ -57,7 +74,7 @@ export const EventRepository = db.getRepository(Event).extend({
 
 		// Check if user is participating
 		if (userId) {
-			const participating = await db.getRepository(EventParticipant).findOne({
+			const participating = await this.manager.getRepository(EventParticipant).findOne({
 				where: {
 					userId: userId,
 					eventId: eventId,

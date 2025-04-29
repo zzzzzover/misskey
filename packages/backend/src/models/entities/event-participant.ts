@@ -4,9 +4,9 @@
  */
 
 import { PrimaryColumn, Entity, Index, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { MiUser } from '@/models/User.js';
+import { MiEvent } from '@/models/Event.js';
 import { id } from '../util/id.js';
-import { User } from './user.js';
-import { Event } from './event.js';
 
 @Entity()
 export class EventParticipant {
@@ -24,24 +24,24 @@ export class EventParticipant {
 		...id(),
 		comment: '用户ID',
 	})
-	public userId: User['id'];
+	public userId: MiUser['id'];
 
-	@ManyToOne(type => User, {
+	@ManyToOne(type => MiUser, {
 		onDelete: 'CASCADE',
 	})
 	@JoinColumn()
-	public user: User | null;
+	public user: MiUser | null;
 
 	@Index()
 	@Column({
 		...id(),
 		comment: '活动ID',
 	})
-	public eventId: Event['id'];
+	public eventId: MiEvent['id'];
 
-	@ManyToOne(type => Event, {
+	@ManyToOne(type => MiEvent, {
 		onDelete: 'CASCADE',
 	})
 	@JoinColumn()
-	public event: Event | null;
+	public event: MiEvent | null;
 }

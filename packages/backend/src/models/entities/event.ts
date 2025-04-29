@@ -4,10 +4,10 @@
  */
 
 import { PrimaryColumn, Entity, Index, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { MiUser } from '@/models/User.js';
+import { MiDriveFile } from '@/models/DriveFile.js';
 import { id } from '../util/id.js';
-import { User } from './user.js';
-import { DriveFile } from './drive-file.js';
-import type { EventParticipant } from './event-participant.js';
+import { EventParticipant } from './event-participant.js';
 
 @Entity()
 export class Event {
@@ -31,13 +31,13 @@ export class Event {
 		...id(),
 		comment: '创建者ID',
 	})
-	public userId: User['id'];
+	public userId: MiUser['id'];
 
-	@ManyToOne(type => User, {
+	@ManyToOne(type => MiUser, {
 		onDelete: 'CASCADE',
 	})
 	@JoinColumn()
-	public user: User | null;
+	public user: MiUser | null;
 
 	@Index()
 	@Column({
@@ -45,13 +45,13 @@ export class Event {
 		nullable: true,
 		comment: '横幅文件ID',
 	})
-	public bannerId: DriveFile['id'] | null;
+	public bannerId: MiDriveFile['id'] | null;
 
-	@ManyToOne(type => DriveFile, {
+	@ManyToOne(type => MiDriveFile, {
 		onDelete: 'SET NULL',
 	})
 	@JoinColumn()
-	public banner: DriveFile | null;
+	public banner: MiDriveFile | null;
 
 	@Column('varchar', {
 		length: 128,
@@ -71,6 +71,6 @@ export class Event {
 	})
 	public participantsCount: number;
 
-	@OneToMany(type => 'EventParticipant', eventParticipant => eventParticipant.event)
+	@OneToMany(() => EventParticipant, eventParticipant => eventParticipant.event)
 	public participants: EventParticipant[];
 }
