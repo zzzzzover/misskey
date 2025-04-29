@@ -310,6 +310,15 @@ import type {
 	EndpointRequest,
 	EndpointResponse,
 	EndpointsResponse,
+	EventsCreateRequest,
+	EventsCreateResponse,
+	EventsDeleteRequest,
+	EventsLeaveRequest,
+	EventsListRequest,
+	EventsListResponse,
+	EventsParticipateRequest,
+	EventsUpdateRequest,
+	EventsUpdateResponse,
 	FederationFollowersRequest,
 	FederationFollowersResponse,
 	FederationFollowingRequest,
@@ -832,6 +841,12 @@ export type Endpoints = {
 	'emojis': { req: EmptyRequest; res: EmojisResponse };
 	'endpoint': { req: EndpointRequest; res: EndpointResponse };
 	'endpoints': { req: EmptyRequest; res: EndpointsResponse };
+	'events/create': { req: EventsCreateRequest; res: EventsCreateResponse };
+	'events/delete': { req: EventsDeleteRequest; res: EmptyResponse };
+	'events/leave': { req: EventsLeaveRequest; res: EmptyResponse };
+	'events/list': { req: EventsListRequest; res: EventsListResponse };
+	'events/participate': { req: EventsParticipateRequest; res: EmptyResponse };
+	'events/update': { req: EventsUpdateRequest; res: EventsUpdateResponse };
 	'export-custom-emojis': { req: EmptyRequest; res: EmptyResponse };
 	'federation/followers': { req: FederationFollowersRequest; res: FederationFollowersResponse };
 	'federation/following': { req: FederationFollowingRequest; res: FederationFollowingResponse };

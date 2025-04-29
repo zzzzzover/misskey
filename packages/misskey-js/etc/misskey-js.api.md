@@ -1760,6 +1760,15 @@ declare namespace entities {
         EndpointRequest,
         EndpointResponse,
         EndpointsResponse,
+        EventsCreateRequest,
+        EventsCreateResponse,
+        EventsDeleteRequest,
+        EventsLeaveRequest,
+        EventsListRequest,
+        EventsListResponse,
+        EventsParticipateRequest,
+        EventsUpdateRequest,
+        EventsUpdateResponse,
         FederationFollowersRequest,
         FederationFollowersResponse,
         FederationFollowingRequest,
@@ -2144,13 +2153,44 @@ declare namespace entities {
         ChatMessageLiteForRoom,
         ChatRoom,
         ChatRoomInvitation,
-        ChatRoomMembership
+        ChatRoomMembership,
+        Event_2 as Event
     }
 }
 export { entities }
 
 // @public (undocumented)
 type Error_2 = components['schemas']['Error'];
+
+// @public (undocumented)
+type Event_2 = components['schemas']['Event'];
+
+// @public (undocumented)
+type EventsCreateRequest = operations['events___create']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type EventsCreateResponse = operations['events___create']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type EventsDeleteRequest = operations['events___delete']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type EventsLeaveRequest = operations['events___leave']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type EventsListRequest = operations['events___list']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type EventsListResponse = operations['events___list']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type EventsParticipateRequest = operations['events___participate']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type EventsUpdateRequest = operations['events___update']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type EventsUpdateResponse = operations['events___update']['responses']['200']['content']['application/json'];
 
 // @public (undocumented)
 type FederationFollowersRequest = operations['federation___followers']['requestBody']['content']['application/json'];

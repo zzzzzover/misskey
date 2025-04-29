@@ -7,7 +7,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { DriveFilesRepository } from '@/models/_.js';
 import type { Packed } from '@/misc/json-schema.js';
-import type { User } from '@/models/entities/user.js';
+import type { MiUser } from '@/models/User.js';
 import type { Event } from '@/models/entities/event.js';
 import { bindThis } from '@/decorators.js';
 import { IdService } from '@/core/IdService.js';
@@ -33,7 +33,7 @@ export class EventEntityService {
 	@bindThis
 	public async pack(
 		src: Event['id'] | Event,
-		me?: { id: User['id'] } | null | undefined,
+		me?: { id: MiUser['id'] } | null | undefined,
 		detailed?: boolean,
 	): Promise<Packed<'Event'>> {
 		const event = typeof src === 'object' ? src : await this.eventRepository.findOneByOrFail({ id: src });
@@ -80,7 +80,7 @@ export class EventEntityService {
 	@bindThis
 	public async packMany(
 		events: (Event['id'] | Event)[],
-		me?: { id: User['id'] } | null | undefined,
+		me?: { id: MiUser['id'] } | null | undefined,
 		detailed?: boolean,
 	): Promise<Packed<'Event'>[]> {
 		return await Promise.all(events.map(e => this.pack(e, me, detailed)));

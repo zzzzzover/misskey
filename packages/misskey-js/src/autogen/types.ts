@@ -1894,6 +1894,62 @@ export type paths = {
      */
     post: operations['endpoints'];
   };
+  '/events/create': {
+    /**
+     * events/create
+     * @description No description provided.
+     *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:events*
+     */
+    post: operations['events___create'];
+  };
+  '/events/delete': {
+    /**
+     * events/delete
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *write:events*
+     */
+    post: operations['events___delete'];
+  };
+  '/events/leave': {
+    /**
+     * events/leave
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *write:events*
+     */
+    post: operations['events___leave'];
+  };
+  '/events/list': {
+    /**
+     * events/list
+     * @description No description provided.
+     *
+     * **Credential required**: *No*
+     */
+    post: operations['events___list'];
+  };
+  '/events/participate': {
+    /**
+     * events/participate
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *write:events*
+     */
+    post: operations['events___participate'];
+  };
+  '/events/update': {
+    /**
+     * events/update
+     * @description No description provided.
+     *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:events*
+     */
+    post: operations['events___update'];
+  };
   '/export-custom-emojis': {
     /**
      * export-custom-emojis
@@ -5485,6 +5541,28 @@ export type components = {
       user?: components['schemas']['UserLite'];
       roomId: string;
       room?: components['schemas']['ChatRoom'];
+    };
+    Event: {
+      /**
+       * Format: id
+       * @example xxxxxxxxxx
+       */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      endsAt: string;
+      title: string;
+      description: string;
+      /** Format: id */
+      bannerId: string | null;
+      bannerUrl: string | null;
+      /** Format: id */
+      userId: string;
+      participantsCount: number;
+      isParticipating: boolean;
+      user?: components['schemas']['UserDetailed'];
+      participants?: components['schemas']['UserDetailed'][];
     };
   };
   responses: never;
@@ -17274,6 +17352,345 @@ export type operations = {
       200: {
         content: {
           'application/json': string[];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * events/create
+   * @description No description provided.
+   *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+   * **Credential required**: *Yes* / **Permission**: *write:events*
+   */
+  events___create: {
+    requestBody: {
+      content: {
+        'application/json': {
+          title: string;
+          description: string;
+          /** Format: date-time */
+          endsAt: string;
+          /** Format: misskey:id */
+          bannerId?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['Event'];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * events/delete
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *write:events*
+   */
+  events___delete: {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          eventId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * events/leave
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *write:events*
+   */
+  events___leave: {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          eventId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * events/list
+   * @description No description provided.
+   *
+   * **Credential required**: *No*
+   */
+  events___list: {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** @default 10 */
+          limit?: number;
+          /** Format: misskey:id */
+          sinceId?: string;
+          /** Format: misskey:id */
+          untilId?: string;
+          /**
+           * @default active
+           * @enum {string}
+           */
+          type?: 'active' | 'ended';
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['Event'][];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * events/participate
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *write:events*
+   */
+  events___participate: {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          eventId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * events/update
+   * @description No description provided.
+   *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+   * **Credential required**: *Yes* / **Permission**: *write:events*
+   */
+  events___update: {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          eventId: string;
+          title?: string;
+          description?: string;
+          /** Format: date-time */
+          endsAt?: string;
+          /** Format: misskey:id */
+          bannerId?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['Event'];
         };
       };
       /** @description Client error */
