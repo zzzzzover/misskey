@@ -472,17 +472,17 @@ const $retentionAggregationsRepository: Provider = {
 	inject: [DI.db],
 };
 
-const $flashsRepository: Provider = {
-	provide: DI.flashsRepository,
-	useFactory: (db: DataSource) => db.getRepository(MiFlash).extend(miRepository as MiRepository<MiFlash>),
-	inject: [DI.db],
-};
+// const $flashsRepository: Provider = {
+// 	provide: DI.flashsRepository,
+// 	useFactory: (db: DataSource) => db.getRepository(MiFlash).extend(miRepository as MiRepository<MiFlash>),
+// 	inject: [DI.db],
+// };
 
-const $flashLikesRepository: Provider = {
-	provide: DI.flashLikesRepository,
-	useFactory: (db: DataSource) => db.getRepository(MiFlashLike).extend(miRepository as MiRepository<MiFlashLike>),
-	inject: [DI.db],
-};
+// const $flashLikesRepository: Provider = {
+// 	provide: DI.flashLikesRepository,
+// 	useFactory: (db: DataSource) => db.getRepository(MiFlashLike).extend(miRepository as MiRepository<MiFlashLike>),
+// 	inject: [DI.db],
+// };
 
 const $rolesRepository: Provider = {
 	provide: DI.rolesRepository,
