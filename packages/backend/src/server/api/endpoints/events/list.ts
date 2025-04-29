@@ -5,13 +5,12 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { EventsListQueryService } from '@/core/EventsListQueryService.js';
 import { EventRepository } from '@/models/repositories/event.js';
 import { EventParticipantRepository } from '@/models/repositories/event-participant.js';
 import { DI } from '@/di-symbols.js';
 import { ApiError } from '@/server/api/error.js';
 import type { DriveFilesRepository } from '@/models/index.js';
-import { DriveFile } from '@/models/entities/drive-file.js';
+import { EventEntityService } from '@/core/entities/EventEntityService.js';
 
 export const meta = {
 	tags: ['events'],
@@ -24,59 +23,7 @@ export const meta = {
 		items: {
 			type: 'object',
 			optional: false, nullable: false,
-			properties: {
-				id: {
-					type: 'string',
-					optional: false, nullable: false,
-					format: 'id',
-					example: 'xxxxxxxxxx',
-				},
-				createdAt: {
-					type: 'string',
-					optional: false, nullable: false,
-					format: 'date-time',
-				},
-				endsAt: {
-					type: 'string',
-					optional: false, nullable: false,
-					format: 'date-time',
-				},
-				title: {
-					type: 'string',
-					optional: false, nullable: false,
-				},
-				description: {
-					type: 'string',
-					optional: false, nullable: false,
-				},
-				bannerId: {
-					type: 'string',
-					optional: false, nullable: true,
-					format: 'id',
-				},
-				bannerUrl: {
-					type: 'string',
-					optional: false, nullable: true,
-				},
-				userId: {
-					type: 'string',
-					optional: false, nullable: false,
-					format: 'id',
-				},
-				user: {
-					type: 'object',
-					optional: false, nullable: false,
-					ref: 'UserDetailed',
-				},
-				participantsCount: {
-					type: 'number',
-					optional: false, nullable: false,
-				},
-				isParticipating: {
-					type: 'boolean',
-					optional: false, nullable: false,
-				},
-			},
+			ref: 'Event',
 		},
 	},
 
@@ -108,6 +55,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 		private eventRepository: EventRepository,
 		private eventParticipantRepository: EventParticipantRepository,
+		private eventEntityService: EventEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			// Get events
@@ -128,27 +76,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.invalidType);
 			}
 
-			// Add participation status
-			const eventsWithParticipation = await Promise.all(events.map(async event => {
-				let isParticipating = false;
-
-				if (me) {
-					isParticipating = await this.eventParticipantRepository.isParticipating(me.id, event.id);
-				}
-
-				let bannerUrl = null;
-				if (event.banner) {
-					bannerUrl = this.driveFilesRepository.getPublicUrl(event.banner);
-				}
-
-				return {
-					...event,
-					bannerUrl,
-					isParticipating,
-				};
-			}));
-
-			return eventsWithParticipation;
+			// 使用EventEntityService处理事件数据
+			return await this.eventEntityService.packMany(events, me);
 		});
 	}
 }

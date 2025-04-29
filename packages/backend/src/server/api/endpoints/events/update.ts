@@ -6,16 +6,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { EventRepository } from '@/models/repositories/event.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { ApiError } from '@/server/api/error.js';
 import { DI } from '@/di-symbols.js';
+import { ApiError } from '@/server/api/error.js';
 import type { DriveFilesRepository } from '@/models/index.js';
-import { GetterService } from '@/server/api/GetterService.js';
+import { EventEntityService } from '@/core/entities/EventEntityService.js';
 
 export const meta = {
 	tags: ['events'],
 
 	requireCredential: true,
+	secure: true,
 
 	kind: 'write:events',
 
@@ -23,18 +23,29 @@ export const meta = {
 		noSuchEvent: {
 			message: 'No such event.',
 			code: 'NO_SUCH_EVENT',
-			id: '3e292f71-e2e2-4cea-8bb1-5f3e86326520',
+			id: 'c484e33c-5025-4396-9c26-37f23d526f31',
+		},
+		accessDenied: {
+			message: 'Access denied.',
+			code: 'ACCESS_DENIED',
+			id: 'd7006846-ac5d-46f4-b5d8-a0e53c7a1c4c',
 		},
 		noSuchFile: {
 			message: 'No such file.',
 			code: 'NO_SUCH_FILE',
-			id: '963e27f4-3f3a-4279-ac28-4ce970a8fc78',
+			id: 'cf8a83fe-e7af-4efe-a6a7-4421791a5576',
 		},
-		accessDenied: {
-			message: 'Only administrators or the event creator can update the event.',
-			code: 'ACCESS_DENIED',
-			id: 'fe8d7103-0ea8-4ec3-814d-f8b401dc69e9',
+		endsAtShouldBeInFuture: {
+			message: 'End date should be in the future.',
+			code: 'ENDS_AT_SHOULD_BE_IN_FUTURE',
+			id: 'f9c5467f-d492-4d3c-9a8g-6be0f215f32e',
 		},
+	},
+
+	res: {
+		type: 'object',
+		optional: false, nullable: false,
+		ref: 'Event',
 	},
 } as const;
 
@@ -44,8 +55,8 @@ export const paramDef = {
 		eventId: { type: 'string', format: 'misskey:id' },
 		title: { type: 'string', minLength: 1, maxLength: 128 },
 		description: { type: 'string', minLength: 1, maxLength: 4096 },
-		bannerId: { type: 'string', format: 'misskey:id', nullable: true },
 		endsAt: { type: 'string', format: 'date-time' },
+		bannerId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['eventId'],
 } as const;
@@ -57,18 +68,18 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private driveFilesRepository: DriveFilesRepository,
 
 		private eventRepository: EventRepository,
-		private driveFileEntityService: DriveFileEntityService,
-		private getterService: GetterService,
+		private eventEntityService: EventEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			// 获取活动
 			const event = await this.eventRepository.findOneBy({ id: ps.eventId });
+
 			if (event == null) {
 				throw new ApiError(meta.errors.noSuchEvent);
 			}
 
-			// 检查权限 - 只有管理员或者活动创建者可以修改活动
-			if (!me.isAdmin && event.userId !== me.id) {
+			// 只有创建者可以编辑
+			if (event.userId !== me.id && !me.isAdmin) {
 				throw new ApiError(meta.errors.accessDenied);
 			}
 
@@ -84,13 +95,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				}
 			}
 
-			// 组装更新内容
-			const updates = {} as any;
+			const updates: Partial<Record<keyof typeof event, any>> = {};
 
 			if (ps.title !== undefined) updates.title = ps.title;
 			if (ps.description !== undefined) updates.description = ps.description;
-			if (ps.endsAt !== undefined) updates.endsAt = new Date(ps.endsAt);
 			if (ps.bannerId !== undefined) updates.bannerId = ps.bannerId;
+
+			if (ps.endsAt !== undefined) {
+				// 检查结束日期是否在未来
+				const endsAt = new Date(ps.endsAt);
+				if (endsAt.getTime() <= Date.now()) {
+					throw new ApiError(meta.errors.endsAtShouldBeInFuture);
+				}
+				updates.endsAt = endsAt;
+			}
 
 			// 更新活动
 			await this.eventRepository.update(event.id, updates);
@@ -98,18 +116,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			// 获取更新后的活动
 			const updatedEvent = await this.eventRepository.findOneByOrFail({ id: event.id });
 
-			// 获取公开链接
-			let bannerUrl = null;
-			if (updatedEvent.banner) {
-				bannerUrl = this.driveFileEntityService.getPublicUrl(updatedEvent.banner);
-			}
-
-			return {
-				...updatedEvent,
-				user: await this.getterService.getUser(updatedEvent.userId),
-				bannerUrl,
-				isParticipating: false, // 由前端根据用户ID自行判断
-			};
+			return await this.eventEntityService.pack(updatedEvent, me);
 		});
 	}
 }

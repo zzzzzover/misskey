@@ -105,6 +105,7 @@ import { ClipEntityService } from './entities/ClipEntityService.js';
 import { DriveFileEntityService } from './entities/DriveFileEntityService.js';
 import { DriveFolderEntityService } from './entities/DriveFolderEntityService.js';
 import { EmojiEntityService } from './entities/EmojiEntityService.js';
+import { EventEntityService } from './entities/EventEntityService.js';
 import { FollowingEntityService } from './entities/FollowingEntityService.js';
 import { FollowRequestEntityService } from './entities/FollowRequestEntityService.js';
 import { GalleryLikeEntityService } from './entities/GalleryLikeEntityService.js';
@@ -297,6 +298,9 @@ const $ApMentionService: Provider = { provide: 'ApMentionService', useExisting: 
 const $ApNoteService: Provider = { provide: 'ApNoteService', useExisting: ApNoteService };
 const $ApPersonService: Provider = { provide: 'ApPersonService', useExisting: ApPersonService };
 const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting: ApQuestionService };
+
+// 添加 $EventEntityService 提供者
+const $EventEntityService: Provider = { provide: 'EventEntityService', useExisting: EventEntityService };
 //#endregion
 
 @Module({
@@ -594,6 +598,12 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$ApPersonService,
 		$ApQuestionService,
 		//#endregion
+
+		// 添加 EventEntityService 到providers
+		EventEntityService,
+
+		// 添加 $EventEntityService 到字符串注入提供者
+		$EventEntityService,
 	],
 	exports: [
 		QueueModule,
@@ -884,6 +894,12 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$ApPersonService,
 		$ApQuestionService,
 		//#endregion
+
+		// 添加 EventEntityService 到exports
+		EventEntityService,
+
+		// 添加 $EventEntityService 到exports
+		$EventEntityService,
 	],
 })
 export class CoreModule { }
