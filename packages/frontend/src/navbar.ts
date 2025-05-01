@@ -106,7 +106,7 @@ export const navbarItemDef = reactive({
 		to: '/my/clips',
 	},
 	channels: {
-		title: i18n.ts.channel,
+		title: '版块',
 		icon: 'ti ti-device-tv',
 		to: '/channels',
 	},

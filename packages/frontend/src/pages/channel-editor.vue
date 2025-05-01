@@ -19,12 +19,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template #label>{{ i18n.ts.color }}</template>
 			</MkColorInput>
 
-			<MkSwitch v-model="isSensitive">
+			<!-- <MkSwitch v-model="isSensitive">
 				<template #label>{{ i18n.ts.sensitive }}</template>
-			</MkSwitch>
+			</MkSwitch> -->
 
 			<MkSwitch v-model="allowRenoteToExternal">
-				<template #label>{{ i18n.ts._channel.allowRenoteToExternal }}</template>
+				<template #label>{{ '允许在版块外转帖并引用' }}</template>
 			</MkSwitch>
 
 			<div>
@@ -60,7 +60,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 			<div class="_buttons">
 				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ channelId ? i18n.ts.save : i18n.ts.create }}</MkButton>
-				<MkButton v-if="channelId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
+				<MkButton v-if="channelId" danger @click="archive()"><i class="ti ti-trash"></i> {{ '删除' }}</MkButton>
 			</div>
 		</div>
 	</MkSpacer>
@@ -174,7 +174,7 @@ async function archive() {
 	const { canceled } = await os.confirm({
 		type: 'warning',
 		title: i18n.tsx.channelArchiveConfirmTitle({ name: name.value }),
-		text: i18n.ts.channelArchiveConfirmDescription,
+		text: '归档后，在版块列表与搜索结果中不会显示，也无法发布新的贴文。',
 	});
 
 	if (canceled) return;
