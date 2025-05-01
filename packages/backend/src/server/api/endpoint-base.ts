@@ -5,6 +5,7 @@
 
 import * as fs from 'node:fs';
 import _Ajv from 'ajv';
+import _AjvFormats from 'ajv-formats';
 import type { Schema, SchemaType } from '@/misc/json-schema.js';
 import type { MiLocalUser } from '@/models/User.js';
 import type { MiAccessToken } from '@/models/AccessToken.js';
@@ -12,11 +13,14 @@ import { ApiError } from './error.js';
 import type { IEndpointMeta } from './endpoints.js';
 
 const Ajv = _Ajv.default;
+const AjvFormats = _AjvFormats.default;
 
 const ajv = new Ajv({
 	useDefaults: true,
 });
 
+// 添加格式支持
+AjvFormats(ajv);
 ajv.addFormat('misskey:id', /^[a-zA-Z0-9]+$/);
 
 export type Response = Record<string, any> | void;
@@ -29,7 +33,7 @@ type File = {
 // TODO: paramsの型をT['params']のスキーマ定義から推論する
 type Executor<T extends IEndpointMeta, Ps extends Schema> =
 	(params: SchemaType<Ps>, user: T['requireCredential'] extends true ? MiLocalUser : MiLocalUser | null, token: MiAccessToken | null, file?: File, cleanup?: () => any, ip?: string | null, headers?: Record<string, string> | null) =>
-		Promise<T['res'] extends undefined ? Response : SchemaType<NonNullable<T['res']>>>;
+	Promise<T['res'] extends undefined ? Response : SchemaType<NonNullable<T['res']>>>;
 
 export abstract class Endpoint<T extends IEndpointMeta, Ps extends Schema> {
 	public exec: (params: any, user: T['requireCredential'] extends true ? MiLocalUser : MiLocalUser | null, token: MiAccessToken | null, file?: File, ip?: string | null, headers?: Record<string, string> | null) => Promise<any>;
