@@ -264,7 +264,7 @@ const headerTabs = computed(() => [{
 }]);
 
 definePage(() => ({
-	title: channel.value ? channel.value.name : i18n.ts.channel,
+	title: channel.value ? channel.value.name : '版块',
 	icon: 'ti ti-device-tv',
 }));
 </script>
