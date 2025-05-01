@@ -15,6 +15,9 @@ import { SystemWebhookService } from '@/core/SystemWebhookService.js';
 import { UserSearchService } from '@/core/UserSearchService.js';
 import { WebhookTestService } from '@/core/WebhookTestService.js';
 import { FlashService } from '@/core/FlashService.js';
+import { EventRepository } from '@/models/repositories/event.js';
+import { EventParticipantRepository } from '@/models/repositories/event-participant.js';
+import { DI } from '@/di-symbols.js';
 import { AccountMoveService } from './AccountMoveService.js';
 import { AccountUpdateService } from './AccountUpdateService.js';
 import { AiService } from './AiService.js';
@@ -279,6 +282,7 @@ const $RoleEntityService: Provider = { provide: 'RoleEntityService', useExisting
 const $ReversiGameEntityService: Provider = { provide: 'ReversiGameEntityService', useExisting: ReversiGameEntityService };
 const $MetaEntityService: Provider = { provide: 'MetaEntityService', useExisting: MetaEntityService };
 const $SystemWebhookEntityService: Provider = { provide: 'SystemWebhookEntityService', useExisting: SystemWebhookEntityService };
+const $EventEntityService: Provider = { provide: 'EventEntityService', useExisting: EventEntityService };
 
 const $ApAudienceService: Provider = { provide: 'ApAudienceService', useExisting: ApAudienceService };
 const $ApDbResolverService: Provider = { provide: 'ApDbResolverService', useExisting: ApDbResolverService };
@@ -299,9 +303,11 @@ const $ApNoteService: Provider = { provide: 'ApNoteService', useExisting: ApNote
 const $ApPersonService: Provider = { provide: 'ApPersonService', useExisting: ApPersonService };
 const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting: ApQuestionService };
 
-// 添加 $EventEntityService 提供者
-const $EventEntityService: Provider = { provide: 'EventEntityService', useExisting: EventEntityService };
 //#endregion
+
+// 添加 EventRepository 和 EventParticipantRepository 提供者
+const $EventRepository: Provider = { provide: EventRepository, useFactory: EventRepository, inject: [DI.db] };
+const $EventParticipantRepository: Provider = { provide: EventParticipantRepository, useFactory: EventParticipantRepository, inject: [DI.db] };
 
 @Module({
 	imports: [
@@ -432,6 +438,7 @@ const $EventEntityService: Provider = { provide: 'EventEntityService', useExisti
 		ReversiGameEntityService,
 		MetaEntityService,
 		SystemWebhookEntityService,
+		EventEntityService,
 
 		ApAudienceService,
 		ApDbResolverService,
@@ -578,6 +585,7 @@ const $EventEntityService: Provider = { provide: 'EventEntityService', useExisti
 		$ReversiGameEntityService,
 		$MetaEntityService,
 		$SystemWebhookEntityService,
+		$EventEntityService,
 
 		$ApAudienceService,
 		$ApDbResolverService,
@@ -600,10 +608,11 @@ const $EventEntityService: Provider = { provide: 'EventEntityService', useExisti
 		//#endregion
 
 		// 添加 EventEntityService 到providers
-		EventEntityService,
-
-		// 添加 $EventEntityService 到字符串注入提供者
 		$EventEntityService,
+
+		// 添加 EventRepository 和 EventParticipantRepository 提供者
+		$EventRepository,
+		$EventParticipantRepository,
 	],
 	exports: [
 		QueueModule,
@@ -730,6 +739,7 @@ const $EventEntityService: Provider = { provide: 'EventEntityService', useExisti
 		ReversiGameEntityService,
 		MetaEntityService,
 		SystemWebhookEntityService,
+		EventEntityService,
 
 		ApAudienceService,
 		ApDbResolverService,
@@ -874,6 +884,7 @@ const $EventEntityService: Provider = { provide: 'EventEntityService', useExisti
 		$ReversiGameEntityService,
 		$MetaEntityService,
 		$SystemWebhookEntityService,
+		$EventEntityService,
 
 		$ApAudienceService,
 		$ApDbResolverService,
@@ -900,6 +911,10 @@ const $EventEntityService: Provider = { provide: 'EventEntityService', useExisti
 
 		// 添加 $EventEntityService 到exports
 		$EventEntityService,
+
+		// 添加 EventRepository 和 EventParticipantRepository 提供者
+		$EventRepository,
+		$EventParticipantRepository,
 	],
 })
 export class CoreModule { }
