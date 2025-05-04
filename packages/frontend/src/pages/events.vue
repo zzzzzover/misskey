@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <script lang="ts" setup>
-import { computed, ref, watch, onMounted } from 'vue';
+import { computed, ref, watch, onMounted, h, defineComponent } from 'vue';
 import * as os from '@/os.js';
 import { $i } from '@/i.js';
 import MkContainer from '@/components/MkContainer.vue';
@@ -12,6 +12,8 @@ import MkTab from '@/components/MkTab.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import { i18n } from '@/i18n.js';
+import { selectFile } from '@/utility/select-file.js';
+import { misskeyApi } from '@/utility/misskey-api.js';
 
 // 定义事件类型
 interface Event {
@@ -20,6 +22,7 @@ interface Event {
 	description: string;
 	endsAt: string;
 	bannerUrl: string;
+	bannerId: string | null;
 	participantsCount: number;
 	isParticipating: boolean;
 }
@@ -60,6 +63,7 @@ const fetchEvents = async (type: string) => {
 			description: '欢迎参加我们的春季活动！这是一个分享和交流的好机会。\n\n活动内容包括：\n1. 线上交友\n2. 分享创意\n3. 参与互动游戏',
 			endsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
 			bannerUrl: 'https://images.unsplash.com/photo-1554418651-70309daf95f5?q=80&w=1000',
+			bannerId: null,
 			participantsCount: 56,
 			isParticipating: false,
 		},
@@ -69,6 +73,7 @@ const fetchEvents = async (type: string) => {
 			description: '邀请各位技术爱好者参与我们的分享大会，共同探讨最新技术趋势！',
 			endsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
 			bannerUrl: 'https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?q=80&w=1000',
+			bannerId: null,
 			participantsCount: 42,
 			isParticipating: true,
 		},
@@ -83,6 +88,33 @@ watch(tab, (newTab) => {
 
 const showEventDetail = (event: Event) => {
 	selectedEvent.value = event;
+};
+
+const setBannerImage = (evt) => {
+	selectFile(evt.currentTarget ?? evt.target, null).then(file => {
+		if (file) {
+			return misskeyApi('drive/files/show', {
+				fileId: file.id,
+			}).then(fileInfo => {
+				return { id: file.id, url: fileInfo.url };
+			});
+		}
+		return null;
+	}).then(result => {
+		if (result) {
+			os.alert({
+				type: 'info',
+				text: '横幅图片已上传，将在后端实现后生效',
+			});
+		}
+	});
+};
+
+const removeBannerImage = () => {
+	os.alert({
+		type: 'info',
+		text: '横幅图片已移除，将在后端实现后生效',
+	});
 };
 
 const createEvent = () => {
@@ -100,16 +132,24 @@ const createEvent = () => {
 			type: 'string',
 			label: '结束时间',
 		},
-		bannerUrl: {
-			type: 'string',
-			label: '横幅图片链接',
+		banner: {
+			type: 'drive-file',
+			label: '横幅图片',
 		},
 	}).then(async result => {
-		os.alert({
-			type: 'info',
-			text: '活动创建功能将在后端实现后可用',
-		});
-		fetchEvents(tab.value);
+		if (!result.canceled && result.result) {
+			const eventData = {
+				...result.result,
+				bannerId: result.result.banner?.id,
+				bannerUrl: result.result.banner?.url,
+			};
+
+			os.alert({
+				type: 'info',
+				text: '活动创建功能将在后端实现后可用',
+			});
+			fetchEvents(tab.value);
+		}
 	});
 };
 
@@ -131,17 +171,25 @@ const editEvent = (event: Event) => {
 			label: '结束时间',
 			default: new Date(event.endsAt).toLocaleString(),
 		},
-		bannerUrl: {
-			type: 'string',
-			label: '横幅图片链接',
-			default: event.bannerUrl,
+		banner: {
+			type: 'drive-file',
+			label: '横幅图片',
+			defaultFileId: event.bannerId,
 		},
 	}).then(async result => {
-		os.alert({
-			type: 'info',
-			text: '活动编辑功能将在后端实现后可用',
-		});
-		fetchEvents(tab.value);
+		if (!result.canceled && result.result) {
+			const eventData = {
+				...result.result,
+				bannerId: result.result.banner?.id,
+				bannerUrl: result.result.banner?.url,
+			};
+
+			os.alert({
+				type: 'info',
+				text: '活动编辑功能将在后端实现后可用',
+			});
+			fetchEvents(tab.value);
+		}
 	});
 };
 
