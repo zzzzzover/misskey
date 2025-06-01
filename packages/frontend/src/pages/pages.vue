@@ -76,16 +76,16 @@ const headerTabs = computed(() => [{
 	icon: 'ti ti-flare',
 }, {
 	key: 'my',
-	title: i18n.ts._pages.my,
+	title: '我管理的',
 	icon: 'ti ti-edit',
 }, {
 	key: 'liked',
-	title: i18n.ts._pages.liked,
+	title: '我参加的',
 	icon: 'ti ti-heart',
 }]);
 
 definePage(() => ({
-	title: i18n.ts.pages,
+	title: '活动',
 	icon: 'ti ti-note',
 }));
 </script>

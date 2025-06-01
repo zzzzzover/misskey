@@ -202,7 +202,7 @@ const headerActions = computed(() => []);
 const headerTabs = computed(() => []);
 
 definePage(() => ({
-	title: props.channelId ? i18n.ts._channel.edit : i18n.ts._channel.create,
+	title: props.channelId ? '编辑版块' : '创建版块',
 	icon: 'ti ti-device-tv',
 }));
 </script>
