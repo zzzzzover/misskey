@@ -20,12 +20,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</MkInput>
 
 				<MkInput v-model="summary">
-					<template #label>{{ i18n.ts._pages.summary }}</template>
+					<template #label>{{ '活动摘要' }}</template>
 				</MkInput>
 
 				<MkInput v-model="name">
 					<template #prefix>{{ url }}/@{{ author.username }}/pages/</template>
-					<template #label>{{ i18n.ts._pages.url }}</template>
+					<template #label>{{ '活动url' }}</template>
 				</MkInput>
 
 				<MkSwitch v-model="alignCenter">{{ i18n.ts._pages.alignCenter }}</MkSwitch>
@@ -255,7 +255,7 @@ const headerActions = computed(() => []);
 
 const headerTabs = computed(() => [{
 	key: 'settings',
-	title: i18n.ts._pages.pageSetting,
+	title: '活动设置',
 	icon: 'ti ti-settings',
 }, {
 	key: 'contents',
@@ -264,9 +264,9 @@ const headerTabs = computed(() => [{
 }]);
 
 definePage(() => ({
-	title: props.initPageId ? i18n.ts._pages.editPage
+	title: props.initPageId ? '编辑活动'
 	: props.initPageName && props.initUser ? i18n.ts._pages.readPage
-	: i18n.ts._pages.newPage,
+	: '创建活动',
 	icon: 'ti ti-pencil',
 }));
 </script>

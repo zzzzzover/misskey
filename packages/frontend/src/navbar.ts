@@ -66,7 +66,7 @@ export const navbarItemDef = reactive({
 			lookup();
 		},
 	},
-	lists: {
+	/*lists: {
 		title: i18n.ts.lists,
 		icon: 'ti ti-list',
 		show: computed(() => $i != null),
@@ -77,7 +77,7 @@ export const navbarItemDef = reactive({
 		icon: 'ti ti-antenna',
 		show: computed(() => $i != null),
 		to: '/my/antennas',
-	},
+	},*/
 	favorites: {
 		title: i18n.ts.favorites,
 		icon: 'ti ti-star',
@@ -89,7 +89,7 @@ export const navbarItemDef = reactive({
 		icon: 'ti ti-news',
 		to: '/pages',
 	},
-	play: {
+	/*play: {
 		title: 'Play',
 		icon: 'ti ti-player-play',
 		to: '/play',
@@ -98,7 +98,7 @@ export const navbarItemDef = reactive({
 		title: i18n.ts.gallery,
 		icon: 'ti ti-icons',
 		to: '/gallery',
-	},
+	},*/
 	clips: {
 		title: i18n.ts.clip,
 		icon: 'ti ti-paperclip',
@@ -110,7 +110,7 @@ export const navbarItemDef = reactive({
 		icon: 'ti ti-device-tv',
 		to: '/channels',
 	},
-	chat: {
+	/*chat: {
 		title: i18n.ts.chat,
 		icon: 'ti ti-messages',
 		to: '/chat',
@@ -127,7 +127,7 @@ export const navbarItemDef = reactive({
 		title: 'Misskey Games',
 		icon: 'ti ti-device-gamepad',
 		to: '/games',
-	},
+	},*/
 	ui: {
 		title: i18n.ts.switchUi,
 		icon: 'ti ti-devices',
@@ -156,13 +156,13 @@ export const navbarItemDef = reactive({
 			openInstanceMenu(ev);
 		},
 	},
-	tools: {
+	/*tools: {
 		title: i18n.ts.tools,
 		icon: 'ti ti-tool',
 		action: (ev) => {
 			openToolsMenu(ev);
 		},
-	},
+	},*/
 	reload: {
 		title: i18n.ts.reload,
 		icon: 'ti ti-refresh',
@@ -176,11 +176,11 @@ export const navbarItemDef = reactive({
 		show: computed(() => $i != null),
 		to: `/@${$i?.username}`,
 	},
-	cacheClear: {
+	/*cacheClear: {
 		title: i18n.ts.clearCache,
 		icon: 'ti ti-trash',
 		action: (ev) => {
 			clearCache();
 		},
-	},
+	},*/
 });
