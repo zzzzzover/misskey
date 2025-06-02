@@ -19,9 +19,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template #label>{{ i18n.ts.color }}</template>
 			</MkColorInput>
 
-			<MkSwitch v-model="isSensitive">
-				<template #label>{{ i18n.ts.sensitive }}</template>
-			</MkSwitch>
 
 			<MkSwitch v-model="allowRenoteToExternal">
 				<template #label>{{ i18n.ts._channel.allowRenoteToExternal }}</template>
