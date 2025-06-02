@@ -44,7 +44,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 			</MkPagination>
 		</div>
-		<div v-else-if="tab === 'owned'">
+		<div v-else-if="tab === 'owned' && (isModerator || isAdmin)">
 			<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
 			<MkPagination v-slot="{items}" :pagination="ownedPagination">
 				<div :class="$style.root">
@@ -68,6 +68,7 @@ import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import { definePage } from '@/page.js';
 import { i18n } from '@/i18n.js';
 import { useRouter } from '@/router.js';
+import { iAmModerator, iAmAdmin } from '@/i.js';
 
 const router = useRouter();
 
@@ -81,6 +82,10 @@ const tab = ref('featured');
 const searchQuery = ref('');
 const searchType = ref('nameAndDescription');
 const channelPagination = ref();
+
+// 暴露给模板使用
+const isAdmin = ref(iAmAdmin);
+const isModerator = ref(iAmModerator);
 
 onMounted(() => {
 	searchQuery.value = props.query ?? '';
