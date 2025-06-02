@@ -44,7 +44,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 			</MkPagination>
 		</div>
-		<div v-else-if="tab === 'owned' && (isModerator || isAdmin)">
+		<div v-else-if="tab === 'owned' && isStaff">
 			<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
 			<MkPagination v-slot="{items}" :pagination="ownedPagination">
 				<div :class="$style.root">
@@ -68,7 +68,7 @@ import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import { definePage } from '@/page.js';
 import { i18n } from '@/i18n.js';
 import { useRouter } from '@/router.js';
-import { iAmModerator, iAmAdmin } from '@/i.js';
+import { $i } from '@/i.js';
 
 const router = useRouter();
 
@@ -82,10 +82,11 @@ const tab = ref('featured');
 const searchQuery = ref('');
 const searchType = ref('nameAndDescription');
 const channelPagination = ref();
+const isStaff = computed(() => $i && ($i.isAdmin || $i.isModerator));
 
-// 暴露给模板使用
-const isAdmin = ref(iAmAdmin);
-const isModerator = ref(iAmModerator);
+defineExpose({
+	isStaff,
+});
 
 onMounted(() => {
 	searchQuery.value = props.query ?? '';
@@ -134,33 +135,41 @@ function create() {
 	router.push('/channels/new');
 }
 
-const headerActions = computed(() => [{
+const headerActions = computed(() => isStaff.value ? [{
 	icon: 'ti ti-plus',
 	text: i18n.ts.create,
 	handler: create,
-}]);
+}] : []);
 
-const headerTabs = computed(() => [{
-	key: 'search',
-	title: i18n.ts.search,
-	icon: 'ti ti-search',
-}, {
-	key: 'featured',
-	title: i18n.ts._channel.featured,
-	icon: 'ti ti-comet',
-}, {
-	key: 'favorites',
-	title: i18n.ts.favorites,
-	icon: 'ti ti-star',
-}, {
-	key: 'following',
-	title: i18n.ts._channel.following,
-	icon: 'ti ti-eye',
-}, {
-	key: 'owned',
-	title: i18n.ts._channel.owned,
-	icon: 'ti ti-edit',
-}]);
+const headerTabs = computed(() => {
+	const tabs = [{
+		key: 'search',
+		title: i18n.ts.search,
+		icon: 'ti ti-search',
+	}, {
+		key: 'featured',
+		title: i18n.ts._channel.featured,
+		icon: 'ti ti-comet',
+	}, {
+		key: 'favorites',
+		title: i18n.ts.favorites,
+		icon: 'ti ti-star',
+	}, {
+		key: 'following',
+		title: i18n.ts._channel.following,
+		icon: 'ti ti-eye',
+	}];
+
+	if (isStaff.value) {
+		tabs.push({
+			key: 'owned',
+			title: i18n.ts._channel.owned,
+			icon: 'ti ti-edit',
+		});
+	}
+
+	return tabs;
+});
 
 definePage(() => ({
 	title: '版块',
